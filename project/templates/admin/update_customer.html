@@ -1,0 +1,26 @@
+{% extends 'admin/admin_dashboard.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+    <div class="content"><div class="col-md-6 offset-md-3"></div>
+<h1>update customer</h1>
+<br/>
+
+<form method="POST" >
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+
+
+    <br>
+    <button type="submit" class="btn btn-secondary">Update customer</button>
+    <a href="{% url 'customer' %}" class="btn btn-secondary">Back</a>
+
+  </form>
+
+
+</div>
+{% endblock %}

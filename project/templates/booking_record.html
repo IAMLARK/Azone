@@ -1,0 +1,48 @@
+{% extends 'admin/admin_dashboard.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+    <div class="content">
+<div class="card">
+    <div class="card-header">
+        {{ booking_record.customer.first_name }} {{ booking_record.customer.last_name }}
+    </div>
+    <div class="card-body">
+      <p class="card-text">
+        <strong>Email: </strong>{{ booking_record.customer.email }}<br/>
+      </p>
+      <p class="card-text"></p>
+        <strong>Phone: </strong>{{ booking_record.customer.phone }}<br/>
+    </p>
+  </p>
+  <p class="card-text"></p>
+    <strong>Product: </strong>{{ booking_record.product }}<br/>
+</p>
+    <p class="card-text"></p>
+        <strong>Id no: </strong>{{ booking_record.customer.Id_no }}<br/>
+    </p>
+    <p class="card-text"></p>
+        <strong>Serial no: </strong>{{ booking_record.Serial_no }}<br/>
+    </p>
+    
+    <p class="card-text"></p>
+        <strong>Created At: </strong>{{ booking_record.created_at }}<br/>
+    </p>
+    <p class="card-text"></p>
+        <strong>At: </strong>{{ booking_record.id }}<br/>
+      </p>
+      
+    </div>
+  </div>
+<br/>
+
+<a href="{% url 'records' %} " class="btn btn-secondary">Back</a>
+
+<a href="{% url 'delete_record' booking_record.id %} " class="btn btn-danger">Delete</a>
+
+<a href="{% url 'update_record' booking_record.id %}" class="btn btn-secondary">Update Record</a>
+
+{% endblock %}

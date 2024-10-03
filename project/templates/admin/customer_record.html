@@ -1,0 +1,41 @@
+{% extends 'admin/admin_dashboard.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+    <div class="content">
+<div class="card">
+    <div class="card-header">
+        {{ customer_record.first_name }} {{ customer_record.last_name }}
+    </div>
+    <div class="card-body">
+      <p class="card-text">
+        <strong>Email: </strong>{{ customer_record.email }}<br/>
+      </p>
+      <p class="card-text"></p>
+        <strong>Phone: </strong>{{ customer_record.phone }}<br/>
+    </p>
+  </p>
+    <p class="card-text"></p>
+        <strong>Id no: </strong>{{ customer_record.Id_no }}<br/>
+    </p>
+    <p class="card-text"></p>
+        <strong>Created At: </strong>{{ customer_record.created_at }}<br/>
+    </p>
+    <p class="card-text"></p>
+        <strong>At: </strong>{{ customer_record.id }}<br/>
+      </p>
+      
+    </div>
+  </div>
+<br/>
+
+<a href="{% url 'records' %} " class="btn btn-secondary">Back</a>
+
+<a href="{% url 'delete_customer' customer_record.id %} " class="btn btn-danger">Delete</a>
+
+<a href="{% url 'update_customer' customer_record.id %}" class="btn btn-secondary">Update Customer</a>
+
+{% endblock %}

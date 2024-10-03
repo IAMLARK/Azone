@@ -1,0 +1,33 @@
+{% extends 'admin/admin_dashboard.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+    <div class="content">
+<h1>Add New Customer</h1>
+<br/>
+
+<form method="POST" action="{% url 'add_customer' %}">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+
+
+    <br>
+    <button type="submit" class="btn btn-secondary">Add</button>
+
+    <a href="{% url 'customer' %} " class="btn btn-secondary">Back</a>
+  </form>
+  <br>
+  <br>
+  <br>
+
+
+
+  
+
+
+
+  {% endblock %}
