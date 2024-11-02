@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-ocrmlbk7s8*#dze*zete&+w3py&6^wxw+0%lrea^@_e92zpkh5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['azone-production.up.railway.app', 'https://azone-production.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1','azone-production.up.railway.app', 'https://azone-production.up.railway.app']
 CSRF_TRUSTED_ORIGINS = ['https://azone-production.up.railway.app']
 
 
