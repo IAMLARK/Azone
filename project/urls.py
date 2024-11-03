@@ -1,3 +1,4 @@
+from django.http import HttpResponseNotFound
 from django.urls import path
 from . import views
 
@@ -20,7 +21,7 @@ urlpatterns = [
     path('customer_record/<int:pk>', views.customer_record, name='customer_record'),
     path('delete_customer/<int:pk>', views.delete_customer, name='delete_customer'),
     path('update_customer/<int:pk>', views.update_customer, name='update_customer'),
-
+    path('favicon.ico', lambda request: HttpResponseNotFound()),
     
 
 
