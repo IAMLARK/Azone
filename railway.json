@@ -1,10 +1,11 @@
 {
-    "build": {
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
       "builder": "NIXPACKS"
-    },
-    "deploy": {
-      "startCommand": "gunicorn Azone.wsgi:application",
+  },
+  "deploy": {
+      "startCommand": "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn Azone.wsgi:application",
       "restartPolicyType": "ON_FAILURE",
       "restartPolicyMaxRetries": 10
-    }
   }
+}
