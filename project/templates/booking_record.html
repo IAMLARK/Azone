@@ -32,7 +32,13 @@
         <strong>Created At: </strong>{{ booking_record.created_at }}<br/>
     </p>
     <p class="card-text"></p>
+    <strong>Amount: </strong>$90<br/>
+</p>
+    <p class="card-text"></p>
         <strong>At: </strong>{{ booking_record.id }}<br/>
+      </p>
+      <p class="card-text"></p>
+        <strong>PAY: </strong>{{ paypal_form }}<br/>
       </p>
       
     </div>
@@ -44,5 +50,6 @@
 <a href="{% url 'delete_record' booking_record.id %} " class="btn btn-danger">Delete</a>
 
 <a href="{% url 'update_record' booking_record.id %}" class="btn btn-secondary">Update Record</a>
+
 
 {% endblock %}

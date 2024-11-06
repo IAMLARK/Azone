@@ -7,6 +7,10 @@ from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticated_user, allowed_users
 from django.contrib.auth.models import Group
 from django.db import IntegrityError
+from django.urls import reverse
+from paypal.standard.forms import PayPalPaymentsForm 
+from django.conf import settings
+import uuid
 
 def login_user(request):
      if request.method == 'POST':
@@ -96,10 +100,26 @@ def add_record(request):
     
 @login_required(login_url='login')
 def booking_record(request, pk):
+    # get the host
+    host = request.get_host()
+    # create paypal form dictionary
+    paypal_dict = {
+        'business': settings.PAYPAL_RECEIVER_EMAIL,
+        "amount": "50.00",
+        "item_name": "booking",
+        "invoice":  str(uuid.uuid4()),
+        "currency_code": 'USD',
+        "notify_url": 'https://{}{}'.format(host, reverse('paypal-ipn')),
+        "return": 'https://{}{}'.format(host, reverse('payment_success')),
+        "cancel_return": 'https://{}{}'.format(host, reverse('payment_failed')),
+    }
+
+    paypal_form = PayPalPaymentsForm(initial=paypal_dict)
+
     if request.user.is_authenticated:
         # look up for records
         booking_record = Record.objects.get(id=pk)
-        return render(request, 'booking_record.html', {'booking_record':booking_record})
+        return render(request, 'booking_record.html', {'booking_record':booking_record, 'paypal_form':paypal_form})
     else:
         messages.success(request, "You must be logged in to view that page..")
         return redirect('login')
@@ -198,3 +218,9 @@ def update_customer(request, pk):
     else:
          messages.success(request, "You must be logged in..")   
          return redirect('login')       
+
+def payment_success(request):
+    return render(request, "payment/payment_success.html")
+
+def payment_failed(request):
+    return render(request, "payment/payment_failed.html")

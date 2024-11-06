@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'project',
     'whitenoise.runserver_nostatic',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PAYPAL_TEST = True
+
+PAYPAL_RECEIVER_EMAIL = 'azonebusiness@gmail.com'
