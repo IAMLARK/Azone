@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from .forms import SignUpForm, AddRecordForm, AddCustomerForm
 from django.contrib.auth import login,logout, authenticate
 from .models import Record, Customer
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticated_user, allowed_users
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.db import IntegrityError
 from django.urls import reverse
 from paypal.standard.forms import PayPalPaymentsForm 
@@ -130,7 +131,12 @@ def test(request):
 @login_required(login_url='login')   
 def record(request):
     records = Record.objects.all()
+    paginator = Paginator(records, 10)  # Show 10 records per page
+
+    page_number = request.GET.get('page')  # Get the page number from the URL
+    records = paginator.get_page(page_number)
     return render(request, 'records.html', {'records':records}) 
+
 
 @login_required(login_url='login')
 def delete_record(request, pk):
@@ -165,9 +171,11 @@ def products(request):
 
 def customer(request):
     customers = Customer.objects.all()
-    
-    return render(request, 'admin/customer.html', {'customers':customers})  
+    paginator = Paginator(customers, 10)  # Show 10 customers per page
 
+    page_number = request.GET.get('page')  # Get the page number from the URL
+    customers = paginator.get_page(page_number)
+    return render(request, 'admin/customer.html', {'customers':customers})  
 
 @login_required(login_url='login')
 def add_customer(request):
@@ -178,7 +186,7 @@ def add_customer(request):
                 try:
                     add_customer = form.save()   
                     messages.success(request, "Record Added..")
-                    return redirect('customer_records')
+                    return redirect('customer')
                 except IntegrityError:
                     form.add_error('Id_no', 'A customer with this ID already exists.')
         return render(request, 'admin/add_customer.html', {'form':form})
@@ -220,7 +228,77 @@ def update_customer(request, pk):
         return render(request, 'admin/update_customer.html', {'form':form})
     else:
          messages.success(request, "You must be logged in..")   
-         return redirect('login')       
+         return redirect('login')
+    
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin',])
+def manage_users(request):
+    users = User.objects.all()
+    groups = Group.objects.all()
+    paginator = Paginator(users, 10)  # Show 10 users per page
+
+    page_number = request.GET.get('page')  # Get the current page number from the URL
+    users = paginator.get_page(page_number)
+    return render(request, 'admin/users.html', {'users': users, 'groups': groups})    
+@login_required
+@allowed_users(allowed_roles=['admin'])
+def add_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        group_id = request.POST.get('group')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Check if password and confirm_password match
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect('add_user')  # Redirect to the same page to display the error
+        
+        # Create the user
+        try:
+            user = User.objects.create_user(username=username, password=password, email=email,
+                                             first_name=first_name, last_name=last_name)
+            group = Group.objects.get(id=group_id)
+            user.groups.add(group)
+            messages.success(request, "User added successfully.")
+            return redirect('manage_users')  # Redirect to manage users after successful creation
+        except Exception as e:
+            messages.error(request, f"Error adding user: {e}")
+            return redirect('add_user')  # Redirect to the same page to display the error
+
+    return render(request, 'admin/add_user.html', {'groups': Group.objects.all()})
+
+@login_required
+@allowed_users(allowed_roles=['admin'])
+def user_detail(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return render(request, 'admin/user_detail.html', {'user': user})
+
+@login_required
+@allowed_users(allowed_roles=['admin'])
+def user_update(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.save()
+        messages.success(request, 'User updated successfully!')
+        return redirect('user_detail', user_id=user.id)
+    return render(request, 'admin/user_update.html', {'user': user})
+
+@login_required
+@allowed_users(allowed_roles=['admin'])
+def user_delete(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    messages.success(request, 'User deleted successfully!')
+    return redirect('manage_users')    
+           
 
 def payment_success(request):
     return render(request, "payment/payment_success.html")

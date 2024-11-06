@@ -1,0 +1,94 @@
+{% extends 'admin/admin_dashboard.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+    <!-- Main content -->
+    <div class="content">
+        <h2>Users</h2>
+        <hr>
+        <div class="card card-body">
+            <a class="btn btn-success mb-3" href="{% url 'add_user'%}">Create User</a>
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email Address</th>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>Groups</th>
+                        <th>Last Login</th>
+                        <th>Date Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through records in Django or your framework -->
+            {% for user in users %}
+                    
+                    <tr>
+                        <td><a href="{% url 'user_detail' user.id %}" style=" text-decoration: none;">{{ user.id }}</a></td>
+                        <td>{{ user.username }}</td> 
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>
+                            {% for group in user.groups.all %}
+                                {{ group.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if user.last_login %}
+                                {{ user.last_login|date:"Y-m-d H:i:s" }} 
+                            {% else %}
+                                Never logged in
+                            {% endif %}
+                        </td>
+                        <td>{{ user.date_joined|date:"Y-m-d" }}</td>
+
+                        <td><button class="btn btn-sm btn-warning"><a href="{% url 'user_detail' user.id %}" style="color: white; text-decoration: none;">View</a></button></td>
+                    
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+          <!-- Pagination -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if users.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ users.previous_page_number }}" tabindex="-1">Previous</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+        {% endif %}
+
+        {% for num in users.paginator.page_range %}
+            {% if users.number == num %}
+                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if users.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ users.next_page_number }}">Next</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+
+        </div>
+    </div>
+{% endblock %}

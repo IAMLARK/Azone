@@ -1,0 +1,27 @@
+{% extends 'admin/admin_dashboard.html' %}
+
+{% block content %}
+    <div class="content">
+        <h2>User Details</h2>
+        <hr>
+        <div>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email Address:</strong> {{ user.email }}</p>
+            <p><strong>First Name:</strong> {{ user.first_name }}</p>
+            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+            <p><strong>Last Login:</strong> {% if user.last_login %}{{ user.last_login|date:"Y-m-d H:i:s" }}{% else %}Never logged in{% endif %}</p>
+            <p><strong>Date Joined:</strong> {{ user.date_joined|date:"Y-m-d" }}</p>
+        </div>
+        
+        <div>
+            <a class="btn btn-primary" href="{% url 'user_update' user.id %}">Update User</a>
+            <form action="{% url 'user_delete' user.id %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete User</button>
+            </form>
+        </div>
+
+        <br>
+        <a href="{% url 'manage_users' %}" class="btn btn-secondary">Back to Users</a>
+    </div>
+{% endblock %}
