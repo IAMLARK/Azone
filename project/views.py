@@ -100,29 +100,32 @@ def add_record(request):
     
 @login_required(login_url='login')
 def booking_record(request, pk):
-    # get the host
-    host = request.get_host()
-    # create paypal form dictionary
-    paypal_dict = {
-        'business': settings.PAYPAL_RECEIVER_EMAIL,
-        "amount": "50.00",
-        "item_name": "booking",
-        "invoice":  str(uuid.uuid4()),
-        "currency_code": 'USD',
-        "notify_url": 'https://{}{}'.format(host, reverse('paypal-ipn')),
-        "return": 'https://{}{}'.format(host, reverse('payment_success')),
-        "cancel_return": 'https://{}{}'.format(host, reverse('payment_failed')),
-    }
-
-    paypal_form = PayPalPaymentsForm(initial=paypal_dict)
+   
 
     if request.user.is_authenticated:
         # look up for records
         booking_record = Record.objects.get(id=pk)
-        return render(request, 'booking_record.html', {'booking_record':booking_record, 'paypal_form':paypal_form})
+        return render(request, 'booking_record.html', {'booking_record':booking_record,})
     else:
         messages.success(request, "You must be logged in to view that page..")
         return redirect('login')
+    
+def test(request):
+     paypal_dict = {
+        "business": "larkbusiness@gmail.com",
+        "amount": "10.00",
+        "item_name": "booking",
+        "invoice": "unique-invoice-id",
+        "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+        "return": request.build_absolute_uri(reverse('payment_success')),
+        "cancel_return": request.build_absolute_uri(reverse('payment_failed')),
+        "custom": "premium_plan",  # Custom command to correlate to some function later (optional)
+    }
+
+    # Create the instance.
+     form = PayPalPaymentsForm(initial=paypal_dict)
+     context = {"form": form}
+     return render(request, "test.html", context)   
     
 @login_required(login_url='login')   
 def record(request):

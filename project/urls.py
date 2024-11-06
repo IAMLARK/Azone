@@ -22,9 +22,10 @@ urlpatterns = [
     path('delete_customer/<int:pk>', views.delete_customer, name='delete_customer'),
     path('update_customer/<int:pk>', views.update_customer, name='update_customer'),
     path('favicon.ico', lambda request: HttpResponseNotFound()),
-    path('paypal', include("paypal.standard.ipn.urls")),
-    path('payment_success', views.payment_success, name='payment_success'),
-    path('payment_failed', views.payment_failed, name='payment_failed'),
+    path('paypal/', include("paypal.standard.ipn.urls")),
+    path('payment_success/', views.payment_success, name='payment_success'),
+    path('payment_failed/', views.payment_failed, name='payment_failed'),
+    path('test/', views.test, name="test")
 
     
 
